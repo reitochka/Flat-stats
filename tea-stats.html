@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чайная статистика</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #1a120b;
+  --surface: #2c1e13;
+  --surf2:   #3a2a1d;
+  --accent:  #c8853a;
+  --accent2: #e8b87a;
+  --text:    #f0e6d3;
+  --muted:   #8a7060;
+  --green:   #7aad6e;
+  --border:  rgba(200,133,58,0.2);
+  --red:     #c86060;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(200,133,58,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(122,173,110,0.05) 0%, transparent 40%);
+}
+
+/* ── Header ── */
+header {
+  padding: 2.5rem 3rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
+}
+header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--accent2); }
+header .sub { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ── Layout ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+
+/* ── Upload zone ── */
+.upload-zone {
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 2.5rem;
+  display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+  transition: border-color 0.3s;
+}
+.upload-zone:hover { border-color: var(--accent); }
+.upload-zone .icon { font-size: 2.5rem; }
+.upload-zone h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--accent2); margin-bottom: 0.3rem; }
+.upload-zone p  { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+.upload-zone .btns { margin-left: auto; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+#fileInput { display: none; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #1a120b;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.55rem 1.4rem;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--accent2); border-color: var(--accent2); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.btn-danger:hover { background: transparent; color: #e08080; border-color: #e08080; }
+
+/* ── Month tabs ── */
+.tabs { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: center; }
+.tabs .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.tab {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 0.4rem 1rem;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab:hover { border-color: var(--accent); color: var(--accent2); }
+.tab.active { background: var(--accent); border-color: var(--accent); color: #1a120b; font-weight: 600; }
+.tab .x { opacity: 0.5; line-height: 1; }
+.tab .x:hover { opacity: 1; }
+
+/* ── Shared section ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--accent2);
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+}
+.pill {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.7rem;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 0.2rem 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+/* ── Cards ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.3rem 1.5rem;
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.card-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+.card-value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--accent2); line-height: 1.1; }
+.card-unit  { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+
+/* ── Bar chart ── */
+.bars { display: flex; flex-direction: column; gap: 0.65rem; }
+.bar-row { display: grid; grid-template-columns: 180px 1fr 70px; gap: 0.8rem; align-items: center; }
+.bar-name { font-size: 0.84rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { background: var(--surf2); border-radius: 4px; height: 26px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s; }
+.bar-fill.green { background: linear-gradient(90deg, #4a7a42, var(--green)); opacity: 0.85; }
+.bar-val   { font-family: 'Playfair Display', serif; font-size: 0.92rem; color: var(--accent2); text-align: right; }
+
+/* ── Line chart ── */
+.canvas-wrap { width: 100%; height: 300px; position: relative; }
+canvas { display: block; width: 100% !important; height: 100% !important; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.2rem; }
+.chip {
+  padding: 0.28rem 0.85rem;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  opacity: 0.3;
+  color: #1a120b;
+}
+.chip.on  { opacity: 1; }
+.chip-all {
+  background: var(--surf2) !important;
+  border-color: var(--border) !important;
+  color: var(--muted) !important;
+  opacity: 1 !important;
+}
+.chip-all:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+thead th {
+  text-align: left;
+  padding: 0 0.8rem 0.8rem;
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+thead th:hover { color: var(--accent); }
+thead th.sorted { color: var(--accent2); }
+tbody tr { border-bottom: 1px solid rgba(200,133,58,0.07); transition: background 0.12s; }
+tbody tr:hover { background: var(--surf2); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 0.7rem 0.8rem; }
+td.r { text-align: right; font-family: 'Playfair Display', serif; color: var(--accent2); }
+td.hi { background: rgba(200,133,58,0.08); }
+tr.foot td { color: var(--accent2); border-top: 1px solid var(--border); font-weight: 600; }
+.rank {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--surf2); border: 1px solid var(--border);
+  font-size: 0.7rem; color: var(--muted); margin-right: 0.4rem;
+}
+.rank.top { background: rgba(200,133,58,0.2); border-color: var(--accent); color: var(--accent2); }
+
+/* ── Empty state ── */
+.empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty .icon { font-size: 4rem; opacity: 0.45; margin-bottom: 1rem; }
+.empty p { font-size: 0.9rem; line-height: 1.8; }
+
+/* ── Toast ── */
+#toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--surf2); border: 1px solid var(--accent);
+  color: var(--accent2); border-radius: 10px;
+  padding: 0.8rem 1.4rem; font-size: 0.84rem;
+  transform: translateY(120px); opacity: 0;
+  transition: all 0.3s; z-index: 999;
+  pointer-events: none; max-width: 320px;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+@media (max-width: 680px) {
+  header { padding: 1.5rem; }
+  .main  { padding: 1rem; }
+  .bar-row { grid-template-columns: 100px 1fr 55px; }
+  .upload-zone .btns { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍵 Чайный учёт</h1>
+  <span class="sub">Статистика расхода чая по месяцам</span>
+</header>
+
+<div class="main">
+
+  <!-- Upload zone -->
+  <div class="upload-zone" id="dropZone">
+    <div class="icon">📂</div>
+    <div>
+      <h2>Загрузить отчёт за месяц</h2>
+      <p>Отчёт «Products Report» из кассы — загружай как есть.<br>Месяц определяется автоматически из файла.</p>
+    </div>
+    <div class="btns">
+      <button class="btn"         id="btnFile">Выбрать файл</button>
+      <button class="btn btn-danger" id="btnClear">Очистить всё</button>
+    </div>
+    <input type="file" id="fileInput" accept=".csv,.txt" multiple>
+  </div>
+
+  <!-- Month tabs -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- Main content -->
+  <div id="content">
+    <div class="empty">
+      <div class="icon">🫖</div>
+      <p>Загрузите CSV файл, чтобы увидеть статистику</p>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+var db = {};              // { "2026-03": [{name, qty}, ...] }
+var curMonth  = null;
+var filter    = new Set();
+var sortCol   = 2;
+var sortAsc   = false;
+
+var PALETTE = [
+  '#c8853a','#7aad6e','#6ab4c8','#c86868','#a07ac8',
+  '#c8b86a','#6ac8a0','#c86aa0','#8ab0e0','#e0a060'
+];
+
+// ═══════════════════════════════════════════
+//  INIT — load from localStorage
+// ═══════════════════════════════════════════
+(function init() {
+  try {
+    var raw = localStorage.getItem('teaDb');
+    if (raw) {
+      db = JSON.parse(raw);
+      var ms = sortedMonths();
+      if (ms.length) { curMonth = ms[ms.length - 1]; render(); }
+    }
+  } catch (e) { db = {}; }
+})();
+
+// ═══════════════════════════════════════════
+//  BUTTON HANDLERS
+// ═══════════════════════════════════════════
+document.getElementById('btnFile').onclick = function () {
+  document.getElementById('fileInput').click();
+};
+
+document.getElementById('fileInput').onchange = function (e) {
+  var files = Array.prototype.slice.call(e.target.files);
+  if (files.length) loadFiles(files);
+  e.target.value = '';
+};
+
+
+document.getElementById('btnClear').onclick = function () {
+  if (!window.confirm('Удалить все загруженные данные?')) return;
+  db       = {};
+  curMonth = null;
+  filter   = new Set();
+  save();
+  render();
+  toast('Данные удалены');
+};
+
+// ═══════════════════════════════════════════
+//  DRAG & DROP
+// ═══════════════════════════════════════════
+var dz = document.getElementById('dropZone');
+dz.ondragover  = function (e) { e.preventDefault(); dz.style.borderColor = 'var(--accent2)'; };
+dz.ondragleave = function ()  { dz.style.borderColor = ''; };
+dz.ondrop      = function (e) {
+  e.preventDefault();
+  dz.style.borderColor = '';
+  var files = Array.prototype.slice.call(e.dataTransfer.files);
+  if (files.length) loadFiles(files);
+};
+
+// ═══════════════════════════════════════════
+//  FILE LOADING
+// ═══════════════════════════════════════════
+function loadFiles(files) {
+  var total = files.length;
+  var loaded = 0;
+  files.forEach(function (file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      try { parseCSV(e.target.result); }
+      catch (err) { toast('❌ ' + file.name + ': ' + err.message, true); }
+      loaded++;
+    };
+    reader.readAsText(file, 'UTF-8');
+  });
+}
+
+function parseCSV(raw) {
+  // Strip BOM and invisible unicode marks
+  var text = raw
+    .replace(/^\uFEFF/, '')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069]/g, '');
+
+  var lines  = text.split(/\r?\n/).filter(function (l) { return l.trim(); });
+  var parsed = lines.map(function (l) { return splitLine(l).map(cleanCell); });
+
+  // ── Detect month from row index 3, column 1 ──
+  // Row 4 (index 3) looks like: "תאריך","01-03-2026","17-03-2026"
+  var month = null;
+  if (parsed.length > 3 && parsed[3][1]) {
+    var m = parsed[3][1].match(/(\d{2})-(\d{2})-(\d{4})/);
+    if (m) month = m[3] + '-' + m[2];   // → "2026-03"
+  }
+  if (!month) {
+    toast('❌ Не удалось определить месяц. Проверь формат файла.', true);
+    return;
+  }
+
+  // ── Parse product rows ──
+  // Simple 2-col CSV  →  name, qty
+  // POS report        →  skip 5 header rows; col 0 = name, col 4 = qty (kg)
+  var data    = [];
+  var isSimple = parsed.every(function (r) { return r.length <= 2; });
+
+  if (isSimple) {
+    parsed.forEach(function (row) {
+      if (row.length < 2) return;
+      var qty = numOf(row[1]);
+      if (row[0] && !isNaN(qty)) data.push({ name: row[0], qty: qty });
+    });
+  } else {
+    for (var i = 5; i < parsed.length; i++) {
+      var row = parsed[i];
+      if (!row || row.length < 5) continue;
+      if (!row[0] || /^סה/.test(row[0])) continue;  // skip total row
+      var qty = numOf(row[4]);
+      if (!isNaN(qty)) data.push({ name: row[0], qty: qty });
+    }
+  }
+
+  if (!data.length) {
+    toast('❌ Данные не найдены в файле.', true);
+    return;
+  }
+
+  db[month] = data;
+  curMonth  = month;
+  filter    = new Set();
+  save();
+  render();
+  toast('✓ Загружено: ' + data.length + ' позиций за ' + fmtMonth(month));
+}
+
+// CSV line splitter (handles "quoted,fields")
+function splitLine(line) {
+  var res = [], cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var ch = line[i];
+    if (ch === '"') { inQ = !inQ; }
+    else if ((ch === ',' || ch === ';' || ch === '\t') && !inQ) { res.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  res.push(cur);
+  return res;
+}
+
+function cleanCell(s) {
+  return s.trim().replace(/^["'\u201C\u201D]+|["'\u201C\u201D]+$/g, '').trim();
+}
+
+function numOf(s) {
+  if (!s) return NaN;
+  return parseFloat(s.replace(/\s/g, '').replace(',', '.'));
+}
+
+// ═══════════════════════════════════════════
+//  PERSIST
+// ═══════════════════════════════════════════
+function save() {
+  try { localStorage.setItem('teaDb', JSON.stringify(db)); } catch (e) {}
+}
+
+// ═══════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════
+function sortedMonths() {
+  return Object.keys(db).sort();
+}
+
+function allNames(months) {
+  var names = [];
+  months.forEach(function (m) {
+    (db[m] || []).forEach(function (d) {
+      if (names.indexOf(d.name) < 0) names.push(d.name);
+    });
+  });
+  return names.sort();
+}
+
+function getQty(month, name) {
+  var found = null;
+  (db[month] || []).forEach(function (d) { if (d.name === name) found = d; });
+  return found ? found.qty : 0;
+}
+
+function fmtMonth(m) {
+  if (!m) return '';
+  var p = m.split('-');
+  var NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+               'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  return (NAMES[parseInt(p[1]) - 1] || p[1]) + ' ' + p[0];
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toast(msg, long) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function () { el.classList.remove('show'); }, long ? 7000 : 3000);
+}
+
+// ═══════════════════════════════════════════
+//  RENDER — top level
+// ═══════════════════════════════════════════
+function render() {
+  renderTabs();
+  renderContent();
+}
+
+// ── Month tabs ──
+function renderTabs() {
+  var el     = document.getElementById('tabs');
+  var months = sortedMonths();
+  if (!months.length) { el.innerHTML = ''; return; }
+
+  var h = '<span class="label">Месяц:</span>';
+  months.forEach(function (m) {
+    var active = m === curMonth ? ' active' : '';
+    h += '<div class="tab' + active + '" onclick="selectMonth(\'' + m + '\')">'
+       + esc(fmtMonth(m))
+       + '<span class="x" onclick="event.stopPropagation();deleteMonth(\'' + m + '\')">✕</span>'
+       + '</div>';
+  });
+  el.innerHTML = h;
+}
+
+function selectMonth(m) {
+  curMonth = m;
+  filter   = new Set();
+  render();
+}
+
+function deleteMonth(m) {
+  if (!window.confirm('Удалить данные за ' + fmtMonth(m) + '?')) return;
+  delete db[m];
+  var ms = sortedMonths();
+  curMonth = ms.length ? ms[ms.length - 1] : null;
+  save();
+  render();
+}
+
+// ═══════════════════════════════════════════
+//  RENDER — main content
+// ═══════════════════════════════════════════
+function renderContent() {
+  var el = document.getElementById('content');
+  if (!curMonth || !db[curMonth]) {
+    el.innerHTML = '<div class="empty"><div class="icon">🫖</div><p>Загрузите CSV файл, чтобы увидеть статистику</p></div>';
+    return;
+  }
+
+  var months = sortedMonths();
+  var data   = db[curMonth].slice().sort(function (a, b) { return b.qty - a.qty; });
+  var total  = data.reduce(function (s, d) { return s + d.qty; }, 0);
+
+  var h = '';
+  h += buildCards(data, total);
+  h += buildBars(data, total);
+
+  var idx = months.indexOf(curMonth);
+  if (idx > 0) h += buildCompare(months[idx - 1], curMonth);
+
+  h += buildDetailTable(data, total);
+
+  if (months.length >= 2) h += buildLineChartShell(months);
+
+  h += buildSummaryTable(months);
+  h += buildOrderTable(months);
+
+  el.innerHTML = h;
+
+  if (months.length >= 2) drawLineChart(months);
+}
+
+// ── Summary cards ──
+function buildCards(data, total) {
+  function card(label, value, unit) {
+    return '<div class="card">'
+      + '<div class="card-label">' + label + '</div>'
+      + '<div class="card-value">' + value + '</div>'
+      + '<div class="card-unit">'  + unit  + '</div>'
+      + '</div>';
+  }
+  var leader = data[0] ? esc(data[0].name) : '—';
+  var leaderQty = data[0] ? data[0].qty.toFixed(2) + ' кг' : '';
+  return '<div class="cards">'
+    + card('Всего позиций',     data.length,                     'наименований')
+    + card('Общий расход',      total.toFixed(2),                'кг за месяц')
+    + card('Лидер',             '<span style="font-size:1.1rem">' + leader + '</span>', leaderQty)
+    + card('Среднее на позицию', data.length ? (total / data.length).toFixed(2) : '0', 'кг')
+    + '</div>';
+}
+
+// ── Horizontal bars ──
+function buildBars(data, total) {
+  var maxQ = data[0] ? data[0].qty : 1;
+  var rows = data.map(function (d) {
+    return '<div class="bar-row">'
+      + '<div class="bar-name">' + esc(d.name) + '</div>'
+      + '<div class="bar-track"><div class="bar-fill" style="width:' + (d.qty / maxQ * 100).toFixed(1) + '%"></div></div>'
+      + '<div class="bar-val">' + d.qty.toFixed(2) + '</div>'
+      + '</div>';
+  }).join('');
+  return '<div class="section"><div class="section-title">Расход по позициям <span class="pill">' + fmtMonth(curMonth) + '</span></div>'
+    + '<div class="bars">' + rows + '</div></div>';
+}
+
+// ── Month-over-month compare ──
+function buildCompare(m1, m2) {
+  var names = allNames([m1, m2]);
+  var maxQ  = 0.01;
+  names.forEach(function (n) { maxQ = Math.max(maxQ, getQty(m1, n), getQty(m2, n)); });
+  names.sort(function (a, b) { return getQty(m2, b) - getQty(m2, a); });
+
+  var rows = names.map(function (name) {
+    var q1 = getQty(m1, name), q2 = getQty(m2, name);
+    var arrow = q2 > q1 ? '↑' : q2 < q1 ? '↓' : '→';
+    var col   = q2 > q1 ? 'var(--green)' : q2 < q1 ? 'var(--red)' : 'var(--muted)';
+    return '<div class="bar-row" style="margin-bottom:0.35rem">'
+      + '<div class="bar-name" style="font-size:0.78rem">' + esc(name) + '</div>'
+      + '<div>'
+      +   '<div class="bar-track" style="height:13px;margin-bottom:3px"><div class="bar-fill" style="width:' + (q1/maxQ*100).toFixed(1) + '%;opacity:0.65"></div></div>'
+      +   '<div class="bar-track" style="height:13px"><div class="bar-fill green" style="width:' + (q2/maxQ*100).toFixed(1) + '%"></div></div>'
+      + '</div>'
+      + '<div style="text-align:right;font-size:0.8rem;font-weight:600;color:' + col + '">' + arrow + '</div>'
+      + '</div>';
+  }).join('');
+
+  var legend = '<div style="display:flex;gap:1.5rem;margin-bottom:1rem;font-size:0.78rem">'
+    + '<span style="display:flex;align-items:center;gap:0.4rem"><span style="display:inline-block;width:12px;height:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;opacity:0.7"></span>' + fmtMonth(m1) + '</span>'
+    + '<span style="display:flex;align-items:center;gap:0.4rem"><span style="display:inline-block;width:12px;height:5px;background:linear-gradient(90deg,#4a7a42,var(--green));border-radius:3px"></span>' + fmtMonth(m2) + '</span>'
+    + '</div>';
+
+  return '<div class="section"><div class="section-title">Сравнение с прошлым месяцем</div>'
+    + legend + '<div class="bars">' + rows + '</div></div>';
+}
+
+// ── Detail table (current month) ──
+function buildDetailTable(data, total) {
+  var sorted = data.slice();
+  if (sortCol === 1) {
+    sorted.sort(function (a, b) { return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name); });
+  } else {
+    sorted.sort(function (a, b) { return sortAsc ? a.qty - b.qty : b.qty - a.qty; });
+  }
+
+  function thSort(col, label) {
+    var cls = sortCol === col ? ' class="sorted"' : '';
+    var arr = sortCol === col ? (sortAsc ? ' ↑' : ' ↓') : '';
+    return '<th' + cls + ' onclick="doSort(' + col + ')">' + label + arr + '</th>';
+  }
+
+  var rows = sorted.map(function (d, i) {
+    var pct = total ? (d.qty / total * 100).toFixed(1) : 0;
+    return '<tr>'
+      + '<td><span class="rank' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</span></td>'
+      + '<td>' + esc(d.name) + '</td>'
+      + '<td class="r">' + d.qty.toFixed(2) + ' кг</td>'
+      + '<td class="r">' + pct + '%</td>'
+      + '</tr>';
+  }).join('');
+
+  return '<div class="section"><div class="section-title">Детальная таблица <span class="pill">' + fmtMonth(curMonth) + '</span></div>'
+    + '<table><thead><tr>'
+    + '<th onclick="doSort(0)">№</th>'
+    + thSort(1, 'Наименование')
+    + thSort(2, 'Кол-во')
+    + thSort(3, 'Доля')
+    + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+function doSort(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = col === 1; }
+  renderContent();
+}
+
+// ═══════════════════════════════════════════
+//  LINE CHART
+// ═══════════════════════════════════════════
+function buildLineChartShell(months) {
+  var names = allNames(months);
+  if (!filter.size) filter = new Set(names);
+
+  var chips = '<span class="chip chip-all" onclick="filterAll()">Все</span>';
+  names.forEach(function (name, ni) {
+    var color = PALETTE[ni % PALETTE.length];
+    var on    = filter.has(name) ? ' on' : '';
+    chips += '<span class="chip' + on + '" style="background:' + color + ';border-color:' + color + '"'
+           + ' onclick="toggleChip(' + JSON.stringify(name) + ',this)">' + esc(name) + '</span>';
+  });
+
+  return '<div class="section"><div class="section-title">Динамика по месяцам <span class="pill">все позиции</span></div>'
+    + '<div class="chips">' + chips + '</div>'
+    + '<div class="canvas-wrap"><canvas id="lineChart"></canvas></div></div>';
+}
+
+function toggleChip(name, el) {
+  if (filter.has(name)) {
+    if (filter.size === 1) return;
+    filter.delete(name);
+    el.classList.remove('on');
+  } else {
+    filter.add(name);
+    el.classList.add('on');
+  }
+  drawLineChart(sortedMonths());
+}
+
+function filterAll() { filter = new Set(); render(); }
+
+function drawLineChart(months) {
+  var canvas = document.getElementById('lineChart');
+  if (!canvas) return;
+
+  var dpr = window.devicePixelRatio || 1;
+  var W   = canvas.offsetWidth;
+  var H   = canvas.offsetHeight;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var names   = allNames(months);
+  if (!filter.size) filter = new Set(names);
+  var visible = names.filter(function (n) { return filter.has(n); });
+
+  var PAD  = { t: 20, r: 20, b: 50, l: 52 };
+  var cw   = W - PAD.l - PAD.r;
+  var ch   = H - PAD.t - PAD.b;
+  var step = months.length > 1 ? cw / (months.length - 1) : cw / 2;
+
+  // Max value among visible
+  var maxV = 0.01;
+  visible.forEach(function (name) {
+    months.forEach(function (m) { maxV = Math.max(maxV, getQty(m, name)); });
+  });
+
+  // Grid lines
+  for (var g = 0; g <= 5; g++) {
+    var gy = PAD.t + ch - (g / 5) * ch;
+    ctx.strokeStyle = 'rgba(200,133,58,0.1)';
+    ctx.lineWidth   = 1;
+    ctx.beginPath(); ctx.moveTo(PAD.l, gy); ctx.lineTo(PAD.l + cw, gy); ctx.stroke();
+    ctx.fillStyle   = 'rgba(138,112,96,0.8)';
+    ctx.font        = '11px Raleway,sans-serif';
+    ctx.textAlign   = 'right';
+    ctx.fillText((maxV * g / 5).toFixed(2), PAD.l - 6, gy + 4);
+  }
+
+  // X-axis labels
+  months.forEach(function (m, i) {
+    var x     = PAD.l + i * step;
+    var parts = fmtMonth(m).split(' ');
+    ctx.textAlign   = 'center';
+    ctx.fillStyle   = 'rgba(138,112,96,0.9)';
+    ctx.font        = '11px Raleway,sans-serif';
+    ctx.fillText(parts[0], x, PAD.t + ch + 20);
+    ctx.fillStyle   = 'rgba(138,112,96,0.5)';
+    ctx.font        = '10px Raleway,sans-serif';
+    ctx.fillText(parts[1] || '', x, PAD.t + ch + 34);
+  });
+
+  // Lines and dots
+  visible.forEach(function (name) {
+    var ni    = names.indexOf(name);
+    var color = PALETTE[ni % PALETTE.length];
+
+    // Line
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = 2;
+    ctx.lineJoin    = 'round';
+    ctx.beginPath();
+    months.forEach(function (m, i) {
+      var x = PAD.l + i * step;
+      var y = PAD.t + ch - (getQty(m, name) / maxV) * ch;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    months.forEach(function (m, i) {
+      var x = PAD.l + i * step;
+      var y = PAD.t + ch - (getQty(m, name) / maxV) * ch;
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+//  SUMMARY TABLE  (all months, no "Итого" col)
+// ═══════════════════════════════════════════
+function buildSummaryTable(months) {
+  var names = allNames(months);
+
+  var header = '<tr><th>Наименование</th>';
+  months.forEach(function (m) { header += '<th style="text-align:right;min-width:90px">' + fmtMonth(m) + '</th>'; });
+  header += '</tr>';
+
+  var bodyRows = names.map(function (name) {
+    var cells = months.map(function (m) {
+      var q   = getQty(m, name);
+      var cls = m === curMonth ? ' hi' : '';
+      return '<td class="r' + cls + '">' + (q > 0 ? q.toFixed(2) : '—') + '</td>';
+    }).join('');
+    return '<tr><td>' + esc(name) + '</td>' + cells + '</tr>';
+  }).join('');
+
+  var footCells = months.map(function (m) {
+    var t = (db[m] || []).reduce(function (s, d) { return s + d.qty; }, 0);
+    return '<td class="r">' + t.toFixed(2) + '</td>';
+  }).join('');
+  var foot = '<tr class="foot"><td>Итого</td>' + footCells + '</tr>';
+
+  return '<div class="section"><div class="section-title">Сводная таблица <span class="pill">все месяцы</span></div>'
+    + '<table><thead>' + header + '</thead><tbody>' + bodyRows + foot + '</tbody></table></div>';
+}
+
+// ═══════════════════════════════════════════
+//  ORDER RECOMMENDATIONS TABLE
+// ═══════════════════════════════════════════
+function buildOrderTable(months) {
+  var names     = allNames(months);
+  var lastMonth = months[months.length - 1];
+
+  // Build rows: avg/2 and lastMonth/2
+  var rows = names.map(function (name) {
+    var total = 0, count = 0;
+    months.forEach(function (m) {
+      var q = getQty(m, name);
+      if (q > 0) { total += q; count++; }
+    });
+    var avg  = count ? total / count : 0;
+    var last = getQty(lastMonth, name);
+    return { name: name, avg: avg, last: last };
+  });
+
+  // Sort by avg descending
+  rows.sort(function (a, b) { return b.avg - a.avg; });
+
+  var bodyRows = rows.map(function (r) {
+    return '<tr>'
+      + '<td>' + esc(r.name) + '</td>'
+      + '<td class="r">' + (r.avg  > 0 ? (r.avg  / 2).toFixed(2) + ' кг' : '—') + '</td>'
+      + '<td class="r">' + (r.last > 0 ? (r.last / 2).toFixed(2) + ' кг' : '—') + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var lastLabel = fmtMonth(lastMonth);
+
+  return '<div class="section"><div class="section-title">Рекомендации к заказу <span class="pill">на 2 недели</span></div>'
+    + '<table><thead><tr>'
+    + '<th>Наименование</th>'
+    + '<th style="text-align:right;min-width:130px">Среднее ÷ 2<br><span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">среднее за все месяцы</span></th>'
+    + '<th style="text-align:right;min-width:130px">Последний ÷ 2<br><span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">' + lastLabel + '</span></th>'
+    + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>';
+}
+</script>
+</body>
+</html>
