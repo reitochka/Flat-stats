@@ -234,6 +234,33 @@ font-size: 0.7rem; color: var(–muted); margin-right: 0.4rem;
 }
 .rank.top { background: rgba(200,133,58,0.2); border-color: var(–accent); color: var(–accent2); }
 
+/* ── Method switcher ── */
+.switcher {
+display: inline-flex;
+background: var(–surf2);
+border: 1px solid var(–border);
+border-radius: 10px;
+overflow: hidden;
+margin-bottom: 1.2rem;
+}
+.sw-btn {
+padding: 0.4rem 1rem;
+font-family: ‘Raleway’, sans-serif;
+font-size: 0.78rem;
+font-weight: 600;
+color: var(–muted);
+cursor: pointer;
+border: none;
+background: transparent;
+transition: all 0.2s;
+white-space: nowrap;
+}
+.sw-btn.active {
+background: var(–accent);
+color: #1a120b;
+}
+.sw-btn:hover:not(.active) { color: var(–accent); }
+
 /* ── Empty state ── */
 .empty { text-align: center; padding: 4rem 2rem; color: var(–muted); }
 .empty .icon { font-size: 4rem; opacity: 0.45; margin-bottom: 1rem; }
@@ -310,6 +337,7 @@ var curMonth  = null;
 var filter    = new Set();
 var sortCol   = 2;
 var sortAsc   = false;
+var orderMethod = 'ma3'; // 'ma3' = скользящее среднее 3 мес, 'trend' = линейный тренд
 
 var PALETTE = [
   '#c8853a','#7aad6e','#6ab4c8','#c86868','#a07ac8',
@@ -835,41 +863,108 @@ function buildSummaryTable(months) {
 // ═══════════════════════════════════════════
 //  ORDER RECOMMENDATIONS TABLE
 // ═══════════════════════════════════════════
-function buildOrderTable(months) {
-  var names     = allNames(months);
-  var lastMonth = months[months.length - 1];
 
-  // Build rows: avg/2 and lastMonth/2
+// Скользящее среднее по последним N месяцам
+function calcMA(months, name, n) {
+  var slice = months.slice(-n);
+  var total = 0, count = 0;
+  slice.forEach(function (m) {
+    var q = getQty(m, name);
+    if (q > 0) { total += q; count++; }
+  });
+  return count ? total / count : 0;
+}
+
+// Линейный тренд (метод наименьших квадратов)
+function calcTrend(months, name) {
+  var points = [];
+  months.forEach(function (m, i) {
+    var q = getQty(m, name);
+    if (q > 0) points.push({ x: i, y: q });
+  });
+  if (points.length < 2) {
+    // Недостаточно точек — возвращаем среднее
+    return calcMA(months, name, months.length);
+  }
+  var n    = points.length;
+  var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+  points.forEach(function (p) { sumX += p.x; sumY += p.y; sumXY += p.x * p.y; sumX2 += p.x * p.x; });
+  var denom = n * sumX2 - sumX * sumX;
+  if (denom === 0) return sumY / n;
+  var slope     = (n * sumXY - sumX * sumY) / denom;
+  var intercept = (sumY - slope * sumX) / n;
+  // Прогноз на следующий месяц
+  var nextX = months.length;
+  var forecast = intercept + slope * nextX;
+  return Math.max(forecast, 0); // не меньше нуля
+}
+
+function setOrderMethod(method) {
+  orderMethod = method;
+  // update switcher buttons
+  var btns = document.querySelectorAll('.sw-btn');
+  btns.forEach(function (b) {
+    b.classList.toggle('active', b.getAttribute('data-method') === method);
+  });
+  // redraw only the order table
+  var months = sortedMonths();
+  var el = document.getElementById('orderTableWrap');
+  if (el) el.innerHTML = buildOrderTableInner(months);
+}
+
+function buildOrderTable(months) {
+  var a3    = orderMethod === 'ma3'   ? ' active' : '';
+  var a6    = orderMethod === 'ma6'   ? ' active' : '';
+  var atr   = orderMethod === 'trend' ? ' active' : '';
+  return '<div class="section" id="orderSection">'
+    + '<div class="section-title">Рекомендации к заказу <span class="pill">на 2 недели</span></div>'
+    + '<div class="switcher">'
+    + '<button class="sw-btn' + a3  + '" data-method="ma3"   onclick="setOrderMethod(this.dataset.method)">Среднее 3 мес.</button>'
+    + '<button class="sw-btn' + a6  + '" data-method="ma6"   onclick="setOrderMethod(this.dataset.method)">Среднее 6 мес.</button>'
+    + '<button class="sw-btn' + atr + '" data-method="trend" onclick="setOrderMethod(this.dataset.method)">Тренд</button>'
+    + '</div>'
+    + '<div id="orderTableWrap">' + buildOrderTableInner(months) + '</div>'
+    + '</div>';
+}
+
+function buildOrderTableInner(months) {
+  var names = allNames(months);
+
   var rows = names.map(function (name) {
-    var total = 0, count = 0;
-    months.forEach(function (m) {
-      var q = getQty(m, name);
-      if (q > 0) { total += q; count++; }
-    });
-    var avg  = count ? total / count : 0;
-    var last = getQty(lastMonth, name);
-    return { name: name, avg: avg, last: last };
+    var forecast;
+    if (orderMethod === 'ma3')   forecast = calcMA(months, name, 3);
+    else if (orderMethod === 'ma6') forecast = calcMA(months, name, 6);
+    else                          forecast = calcTrend(months, name);
+    return { name: name, forecast: forecast };
   });
 
-  // Sort by avg descending
-  rows.sort(function (a, b) { return b.avg - a.avg; });
+  rows.sort(function (a, b) { return b.forecast - a.forecast; });
 
-  var bodyRows = rows.map(function (r) {
-    return '<tr>'
-      + '<td>' + esc(r.name) + '</td>'
-      + '<td class="r">' + (r.avg  > 0 ? (r.avg  / 2).toFixed(2) + ' кг' : '—') + '</td>'
-      + '<td class="r">' + (r.last > 0 ? (r.last / 2).toFixed(2) + ' кг' : '—') + '</td>'
-      + '</tr>';
+  var methodLabel = orderMethod === 'ma3'
+    ? 'среднее за последние 3 мес.'
+    : orderMethod === 'ma6'
+    ? 'среднее за последние 6 мес.'
+    : 'прогноз по тренду на след. месяц';
+
+  var head = '<table><thead><tr>'
+    + '<th>Наименование</th>'
+    + '<th style="text-align:right;min-width:160px">Рекомендация ÷ 2<br>'
+    + '<span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">' + methodLabel + '</span></th>'
+    + '</tr></thead><tbody>';
+
+  var body = rows.map(function (r) {
+    var val = r.forecast > 0 ? (r.forecast / 2).toFixed(2) + ' кг' : '—';
+    // Show trend direction indicator
+    var indicator = '';
+    if (orderMethod === 'trend' && months.length >= 2) {
+      var prev = calcMA(months, r.name, months.length); // overall avg
+      if      (r.forecast > prev * 1.05) indicator = ' <span style="color:var(--green);font-size:0.8rem">↑</span>';
+      else if (r.forecast < prev * 0.95) indicator = ' <span style="color:var(--red);font-size:0.8rem">↓</span>';
+    }
+    return '<tr><td>' + esc(r.name) + '</td><td class="r">' + val + indicator + '</td></tr>';
   }).join('');
 
-  var lastLabel = fmtMonth(lastMonth);
-
-  return '<div class="section"><div class="section-title">Рекомендации к заказу <span class="pill">на 2 недели</span></div>'
-    + '<table><thead><tr>'
-    + '<th>Наименование</th>'
-    + '<th style="text-align:right;min-width:130px">Среднее ÷ 2<br><span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">среднее за все месяцы</span></th>'
-    + '<th style="text-align:right;min-width:130px">Последний ÷ 2<br><span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">' + lastLabel + '</span></th>'
-    + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>';
+  return head + body + '</tbody></table>';
 }
 </script>
 
