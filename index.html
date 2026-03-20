@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -22,270 +21,243 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘Raleway’, sans-serif;
-font-weight: 300;
-min-height: 100vh;
-background-image:
-radial-gradient(ellipse at 10% 20%, rgba(200,133,58,0.07) 0%, transparent 50%),
-radial-gradient(ellipse at 90% 80%, rgba(122,173,110,0.05) 0%, transparent 40%);
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(200,133,58,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(122,173,110,0.05) 0%, transparent 40%);
 }
 
 /* ── Header ── */
 header {
-padding: 2.5rem 3rem 1.5rem;
-border-bottom: 1px solid var(–border);
-display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
+  padding: 2.5rem 3rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
 }
-header h1 { font-family: ‘Playfair Display’, serif; font-size: 2.2rem; color: var(–accent2); }
-header .sub { font-size: 0.85rem; color: var(–muted); letter-spacing: 0.12em; text-transform: uppercase; }
+header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--accent2); }
+header .sub { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ── Layout ── */
 .main { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 4rem; }
 
 /* ── Upload zone ── */
 .upload-zone {
-background: var(–surface);
-border: 1.5px dashed var(–border);
-border-radius: 16px;
-padding: 2rem 2.5rem;
-margin-bottom: 2.5rem;
-display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
-transition: border-color 0.3s;
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 2.5rem;
+  display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+  transition: border-color 0.3s;
 }
-.upload-zone:hover { border-color: var(–accent); }
+.upload-zone:hover { border-color: var(--accent); }
 .upload-zone .icon { font-size: 2.5rem; }
-.upload-zone h2 { font-family: ‘Playfair Display’, serif; font-size: 1.1rem; color: var(–accent2); margin-bottom: 0.3rem; }
-.upload-zone p  { font-size: 0.82rem; color: var(–muted); line-height: 1.6; }
+.upload-zone h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--accent2); margin-bottom: 0.3rem; }
+.upload-zone p  { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
 .upload-zone .btns { margin-left: auto; display: flex; gap: 0.6rem; flex-wrap: wrap; }
 #fileInput { display: none; }
 
 /* ── Buttons ── */
 .btn {
-display: inline-block;
-background: var(–accent);
-color: #1a120b;
-border: 1px solid var(–accent);
-border-radius: 8px;
-padding: 0.55rem 1.4rem;
-font-family: ‘Raleway’, sans-serif;
-font-weight: 600;
-font-size: 0.82rem;
-letter-spacing: 0.07em;
-text-transform: uppercase;
-cursor: pointer;
-transition: background 0.2s, color 0.2s, border-color 0.2s;
-white-space: nowrap;
+  display: inline-block;
+  background: var(--accent);
+  color: #1a120b;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.55rem 1.4rem;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
 }
-.btn:hover { background: var(–accent2); border-color: var(–accent2); }
+.btn:hover { background: var(--accent2); border-color: var(--accent2); }
 
 .btn-ghost {
-background: transparent;
-color: var(–muted);
-border: 1px solid var(–border);
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
 }
-.btn-ghost:hover { background: transparent; color: var(–accent); border-color: var(–accent); }
+.btn-ghost:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
 
 .btn-danger {
-background: transparent;
-color: var(–red);
-border: 1px solid var(–red);
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
 }
 .btn-danger:hover { background: transparent; color: #e08080; border-color: #e08080; }
 
 /* ── Month tabs ── */
 .tabs { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: center; }
-.tabs .label { font-size: 0.75rem; color: var(–muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.tabs .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
 .tab {
-display: flex; align-items: center; gap: 0.5rem;
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 24px;
-padding: 0.4rem 1rem;
-font-family: ‘Raleway’, sans-serif;
-font-size: 0.8rem;
-color: var(–muted);
-cursor: pointer;
-transition: all 0.2s;
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 0.4rem 1rem;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.tab:hover { border-color: var(–accent); color: var(–accent2); }
-.tab.active { background: var(–accent); border-color: var(–accent); color: #1a120b; font-weight: 600; }
+.tab:hover { border-color: var(--accent); color: var(--accent2); }
+.tab.active { background: var(--accent); border-color: var(--accent); color: #1a120b; font-weight: 600; }
 .tab .x { opacity: 0.5; line-height: 1; }
 .tab .x:hover { opacity: 1; }
 
 /* ── Shared section ── */
 .section {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 1.8rem 2rem;
-margin-bottom: 2rem;
-overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
 }
 .section-title {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.1rem;
-color: var(–accent2);
-margin-bottom: 1.5rem;
-display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--accent2);
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
 }
 .pill {
-font-family: ‘Raleway’, sans-serif;
-font-size: 0.7rem;
-background: var(–surf2);
-border: 1px solid var(–border);
-color: var(–muted);
-border-radius: 12px;
-padding: 0.2rem 0.7rem;
-text-transform: uppercase;
-letter-spacing: 0.1em;
-font-weight: 600;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.7rem;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 0.2rem 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
 }
 
 /* ── Cards ── */
 .cards {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-gap: 1.2rem;
-margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 .card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 14px;
-padding: 1.3rem 1.5rem;
-position: relative; overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.3rem 1.5rem;
+  position: relative; overflow: hidden;
 }
 .card::before {
-content: ‘’;
-position: absolute; top: 0; left: 0; right: 0; height: 2px;
-background: linear-gradient(90deg, var(–accent), transparent);
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
 }
-.card-label { font-size: 0.72rem; color: var(–muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
-.card-value { font-family: ‘Playfair Display’, serif; font-size: 2rem; color: var(–accent2); line-height: 1.1; }
-.card-unit  { font-size: 0.78rem; color: var(–muted); margin-top: 0.3rem; }
+.card-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+.card-value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--accent2); line-height: 1.1; }
+.card-unit  { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
 
 /* ── Bar chart ── */
 .bars { display: flex; flex-direction: column; gap: 0.65rem; }
 .bar-row { display: grid; grid-template-columns: 180px 1fr 70px; gap: 0.8rem; align-items: center; }
 .bar-name { font-size: 0.84rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bar-track { background: var(–surf2); border-radius: 4px; height: 26px; overflow: hidden; }
-.bar-fill  { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(–accent), var(–accent2)); transition: width 0.5s; }
-.bar-fill.green { background: linear-gradient(90deg, #4a7a42, var(–green)); opacity: 0.85; }
-.bar-val   { font-family: ‘Playfair Display’, serif; font-size: 0.92rem; color: var(–accent2); text-align: right; }
+.bar-track { background: var(--surf2); border-radius: 4px; height: 26px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s; }
+.bar-fill.green { background: linear-gradient(90deg, #4a7a42, var(--green)); opacity: 0.85; }
+.bar-val   { font-family: 'Playfair Display', serif; font-size: 0.92rem; color: var(--accent2); text-align: right; }
 
 /* ── Line chart ── */
 .canvas-wrap { width: 100%; height: 300px; position: relative; }
 canvas { display: block; width: 100% !important; height: 100% !important; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.2rem; }
 .chip {
-padding: 0.28rem 0.85rem;
-border-radius: 20px;
-border: 1.5px solid transparent;
-font-family: ‘Raleway’, sans-serif;
-font-size: 0.76rem;
-font-weight: 600;
-cursor: pointer;
-user-select: none;
-white-space: nowrap;
-transition: opacity 0.15s;
-opacity: 0.3;
-color: #1a120b;
+  padding: 0.28rem 0.85rem;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  opacity: 0.3;
+  color: #1a120b;
 }
 .chip.on  { opacity: 1; }
 .chip-all {
-background: var(–surf2) !important;
-border-color: var(–border) !important;
-color: var(–muted) !important;
-opacity: 1 !important;
+  background: var(--surf2) !important;
+  border-color: var(--border) !important;
+  color: var(--muted) !important;
+  opacity: 1 !important;
 }
-.chip-all:hover { border-color: var(–accent) !important; color: var(–accent) !important; }
+.chip-all:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
 
 /* ── Tables ── */
 table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 thead th {
-text-align: left;
-padding: 0 0.8rem 0.8rem;
-font-size: 0.71rem;
-text-transform: uppercase;
-letter-spacing: 0.12em;
-color: var(–muted);
-font-weight: 600;
-border-bottom: 1px solid var(–border);
-cursor: pointer;
-white-space: nowrap;
-user-select: none;
+  text-align: left;
+  padding: 0 0.8rem 0.8rem;
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
 }
-thead th:hover { color: var(–accent); }
-thead th.sorted { color: var(–accent2); }
+thead th:hover { color: var(--accent); }
+thead th.sorted { color: var(--accent2); }
 tbody tr { border-bottom: 1px solid rgba(200,133,58,0.07); transition: background 0.12s; }
-tbody tr:hover { background: var(–surf2); }
+tbody tr:hover { background: var(--surf2); }
 tbody tr:last-child { border-bottom: none; }
 td { padding: 0.7rem 0.8rem; }
-td.r { text-align: right; font-family: ‘Playfair Display’, serif; color: var(–accent2); }
+td.r { text-align: right; font-family: 'Playfair Display', serif; color: var(--accent2); }
 td.hi { background: rgba(200,133,58,0.08); }
-tr.foot td { color: var(–accent2); border-top: 1px solid var(–border); font-weight: 600; }
+tr.foot td { color: var(--accent2); border-top: 1px solid var(--border); font-weight: 600; }
 .rank {
-display: inline-flex; align-items: center; justify-content: center;
-width: 22px; height: 22px; border-radius: 50%;
-background: var(–surf2); border: 1px solid var(–border);
-font-size: 0.7rem; color: var(–muted); margin-right: 0.4rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--surf2); border: 1px solid var(--border);
+  font-size: 0.7rem; color: var(--muted); margin-right: 0.4rem;
 }
-.rank.top { background: rgba(200,133,58,0.2); border-color: var(–accent); color: var(–accent2); }
+.rank.top { background: rgba(200,133,58,0.2); border-color: var(--accent); color: var(--accent2); }
 
-/* ── Method switcher ── */
-.switcher {
-display: inline-flex;
-background: var(–surf2);
-border: 1px solid var(–border);
-border-radius: 10px;
-overflow: hidden;
-margin-bottom: 1.2rem;
-}
-.sw-btn {
-padding: 0.4rem 1rem;
-font-family: ‘Raleway’, sans-serif;
-font-size: 0.78rem;
-font-weight: 600;
-color: var(–muted);
-cursor: pointer;
-border: none;
-background: transparent;
-transition: all 0.2s;
-white-space: nowrap;
-}
-.sw-btn.active {
-background: var(–accent);
-color: #1a120b;
-}
-.sw-btn:hover:not(.active) { color: var(–accent); }
 
 /* ── Empty state ── */
-.empty { text-align: center; padding: 4rem 2rem; color: var(–muted); }
+.empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
 .empty .icon { font-size: 4rem; opacity: 0.45; margin-bottom: 1rem; }
 .empty p { font-size: 0.9rem; line-height: 1.8; }
 
 /* ── Toast ── */
 #toast {
-position: fixed; bottom: 2rem; right: 2rem;
-background: var(–surf2); border: 1px solid var(–accent);
-color: var(–accent2); border-radius: 10px;
-padding: 0.8rem 1.4rem; font-size: 0.84rem;
-transform: translateY(120px); opacity: 0;
-transition: all 0.3s; z-index: 999;
-pointer-events: none; max-width: 320px;
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--surf2); border: 1px solid var(--accent);
+  color: var(--accent2); border-radius: 10px;
+  padding: 0.8rem 1.4rem; font-size: 0.84rem;
+  transform: translateY(120px); opacity: 0;
+  transition: all 0.3s; z-index: 999;
+  pointer-events: none; max-width: 320px;
 }
 #toast.show { transform: translateY(0); opacity: 1; }
 
 @media (max-width: 680px) {
-header { padding: 1.5rem; }
-.main  { padding: 1rem; }
-.bar-row { grid-template-columns: 100px 1fr 55px; }
-.upload-zone .btns { margin-left: 0; }
+  header { padding: 1.5rem; }
+  .main  { padding: 1rem; }
+  .bar-row { grid-template-columns: 100px 1fr 55px; }
+  .upload-zone .btns { margin-left: 0; }
 }
 </style>
-
 </head>
 <body>
 
@@ -297,7 +269,6 @@ header { padding: 1.5rem; }
 <div class="main">
 
   <!-- Upload zone -->
-
   <div class="upload-zone" id="dropZone">
     <div class="icon">📂</div>
     <div>
@@ -312,11 +283,9 @@ header { padding: 1.5rem; }
   </div>
 
   <!-- Month tabs -->
-
   <div class="tabs" id="tabs"></div>
 
   <!-- Main content -->
-
   <div id="content">
     <div class="empty">
       <div class="icon">🫖</div>
@@ -337,7 +306,6 @@ var curMonth  = null;
 var filter    = new Set();
 var sortCol   = 2;
 var sortAsc   = false;
-var orderMethod = 'ma3'; // 'ma3' = скользящее среднее 3 мес, 'trend' = линейный тренд
 
 var PALETTE = [
   '#c8853a','#7aad6e','#6ab4c8','#c86868','#a07ac8',
@@ -864,109 +832,67 @@ function buildSummaryTable(months) {
 //  ORDER RECOMMENDATIONS TABLE
 // ═══════════════════════════════════════════
 
-// Скользящее среднее по последним N месяцам
+// Скользящее среднее по последним N месяцам (нули включаются)
 function calcMA(months, name, n) {
   var slice = months.slice(-n);
-  var total = 0, count = 0;
-  slice.forEach(function (m) {
-    var q = getQty(m, name);
-    if (q > 0) { total += q; count++; }
-  });
-  return count ? total / count : 0;
+  var total = slice.reduce(function (s, m) { return s + getQty(m, name); }, 0);
+  return slice.length ? total / slice.length : 0;
 }
 
-// Линейный тренд (метод наименьших квадратов)
+// Линейный тренд (МНК), нули включаются как реальные данные
 function calcTrend(months, name) {
-  var points = [];
+  if (months.length < 2) return calcMA(months, name, months.length);
+  var n = months.length;
+  var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
   months.forEach(function (m, i) {
     var q = getQty(m, name);
-    if (q > 0) points.push({ x: i, y: q });
+    sumX += i; sumY += q; sumXY += i * q; sumX2 += i * i;
   });
-  if (points.length < 2) {
-    // Недостаточно точек — возвращаем среднее
-    return calcMA(months, name, months.length);
-  }
-  var n    = points.length;
-  var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-  points.forEach(function (p) { sumX += p.x; sumY += p.y; sumXY += p.x * p.y; sumX2 += p.x * p.x; });
   var denom = n * sumX2 - sumX * sumX;
   if (denom === 0) return sumY / n;
   var slope     = (n * sumXY - sumX * sumY) / denom;
   var intercept = (sumY - slope * sumX) / n;
-  // Прогноз на следующий месяц
-  var nextX = months.length;
-  var forecast = intercept + slope * nextX;
-  return Math.max(forecast, 0); // не меньше нуля
-}
-
-function setOrderMethod(method) {
-  orderMethod = method;
-  // update switcher buttons
-  var btns = document.querySelectorAll('.sw-btn');
-  btns.forEach(function (b) {
-    b.classList.toggle('active', b.getAttribute('data-method') === method);
-  });
-  // redraw only the order table
-  var months = sortedMonths();
-  var el = document.getElementById('orderTableWrap');
-  if (el) el.innerHTML = buildOrderTableInner(months);
+  return Math.max(intercept + slope * n, 0); // прогноз на след. месяц
 }
 
 function buildOrderTable(months) {
-  var a3    = orderMethod === 'ma3'   ? ' active' : '';
-  var a6    = orderMethod === 'ma6'   ? ' active' : '';
-  var atr   = orderMethod === 'trend' ? ' active' : '';
-  return '<div class="section" id="orderSection">'
-    + '<div class="section-title">Рекомендации к заказу <span class="pill">на 2 недели</span></div>'
-    + '<div class="switcher">'
-    + '<button class="sw-btn' + a3  + '" data-method="ma3"   onclick="setOrderMethod(this.dataset.method)">Среднее 3 мес.</button>'
-    + '<button class="sw-btn' + a6  + '" data-method="ma6"   onclick="setOrderMethod(this.dataset.method)">Среднее 6 мес.</button>'
-    + '<button class="sw-btn' + atr + '" data-method="trend" onclick="setOrderMethod(this.dataset.method)">Тренд</button>'
-    + '</div>'
-    + '<div id="orderTableWrap">' + buildOrderTableInner(months) + '</div>'
-    + '</div>';
-}
-
-function buildOrderTableInner(months) {
   var names = allNames(months);
 
   var rows = names.map(function (name) {
-    var forecast;
-    if (orderMethod === 'ma3')   forecast = calcMA(months, name, 3);
-    else if (orderMethod === 'ma6') forecast = calcMA(months, name, 6);
-    else                          forecast = calcTrend(months, name);
-    return { name: name, forecast: forecast };
+    var ma3   = calcMA(months, name, 3);
+    var ma6   = calcMA(months, name, 6);
+    var trend = calcTrend(months, name);
+    // trend arrow vs overall avg
+    var avg   = calcMA(months, name, months.length);
+    var arrow = trend > avg * 1.05 ? '<span style="color:var(--green)">↑</span>'
+              : trend < avg * 0.95 ? '<span style="color:var(--red)">↓</span>'
+              : '';
+    return { name: name, ma3: ma3, ma6: ma6, trend: trend, arrow: arrow };
   });
 
-  rows.sort(function (a, b) { return b.forecast - a.forecast; });
+  rows.sort(function (a, b) { return b.ma3 - a.ma3; });
 
-  var methodLabel = orderMethod === 'ma3'
-    ? 'среднее за последние 3 мес.'
-    : orderMethod === 'ma6'
-    ? 'среднее за последние 6 мес.'
-    : 'прогноз по тренду на след. месяц';
+  function fmt(v) { return v > 0 ? (v / 2).toFixed(2) + ' кг' : '—'; }
 
   var head = '<table><thead><tr>'
     + '<th>Наименование</th>'
-    + '<th style="text-align:right;min-width:160px">Рекомендация ÷ 2<br>'
-    + '<span style="font-size:0.63rem;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted)">' + methodLabel + '</span></th>'
+    + '<th style="text-align:right;min-width:110px">Среднее 3 мес. ÷ 2</th>'
+    + '<th style="text-align:right;min-width:110px">Среднее 6 мес. ÷ 2</th>'
+    + '<th style="text-align:right;min-width:110px">Тренд ÷ 2</th>'
     + '</tr></thead><tbody>';
 
   var body = rows.map(function (r) {
-    var val = r.forecast > 0 ? (r.forecast / 2).toFixed(2) + ' кг' : '—';
-    // Show trend direction indicator
-    var indicator = '';
-    if (orderMethod === 'trend' && months.length >= 2) {
-      var prev = calcMA(months, r.name, months.length); // overall avg
-      if      (r.forecast > prev * 1.05) indicator = ' <span style="color:var(--green);font-size:0.8rem">↑</span>';
-      else if (r.forecast < prev * 0.95) indicator = ' <span style="color:var(--red);font-size:0.8rem">↓</span>';
-    }
-    return '<tr><td>' + esc(r.name) + '</td><td class="r">' + val + indicator + '</td></tr>';
+    return '<tr>'
+      + '<td>' + esc(r.name) + '</td>'
+      + '<td class="r">' + fmt(r.ma3) + '</td>'
+      + '<td class="r">' + fmt(r.ma6) + '</td>'
+      + '<td class="r">' + fmt(r.trend) + ' ' + r.arrow + '</td>'
+      + '</tr>';
   }).join('');
 
-  return head + body + '</tbody></table>';
+  return '<div class="section"><div class="section-title">Рекомендации к заказу <span class="pill">на 2 недели</span></div>'
+    + head + body + '</tbody></table></div>';
 }
 </script>
-
 </body>
 </html>
